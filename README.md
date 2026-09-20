@@ -72,8 +72,5 @@ POST и PUT: `Content-Type: application/json`, тело `{"title":"Заметк�
 
 - [Сценарий демонстрации](docs/DEMO.md).
 - [Таблица соответствия](docs/TRACEABILITY.md).
-- [Отчёт ПМ11](output/reports/Отчет_ПМ11_заполненный.docx) и [отчёт ПМ02](output/reports/Отчет_ПМ02_заполненный.docx).
-- [PDF ПМ11](output/pdf/practice-report.pdf) и [PDF ПМ02](output/pdf/practice-report-pm02.pdf).
-- [Проверка перед сдачей](docs/BEFORE_SUBMISSION.md).
 
 Для пересборки Word-отчётов: установить `requirements-report.txt` и выполнить `python tools/fill_reports.py` (Windows, шрифт Times New Roman). Исходные шаблоны находятся в `docs/templates`. Скрипт `tools/build_submission.py` обновляет текстовые материалы. PDF экспортируются из Word.
