@@ -1,7 +1,15 @@
 erDiagram
-  NOTE {
-    bigint id PK
-    varchar title
+  AUTH_USER ||--o{ API_NOTE : owns
+  AUTH_USER }o--o{ AUTH_GROUP : belongs
+  AUTH_USER {
+    int id PK
+    string username
+    string password_hash
+  }
+  API_NOTE {
+    int id PK
+    int owner_id FK
+    string title
     text body
     datetime created_at
   }

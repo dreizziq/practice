@@ -1,0 +1,14 @@
+{
+  "db.sqlite3": {
+    "integrity": "ok",
+    "foreign_keys": [],
+    "notes": 3,
+    "users": 4
+  },
+  "backups/verified-restore.sqlite3": {
+    "integrity": "ok",
+    "foreign_keys": [],
+    "notes": 3,
+    "users": 4
+  }
+}

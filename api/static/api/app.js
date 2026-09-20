@@ -1,6 +1,7 @@
 'use strict';
 const element = (id) => document.getElementById(id);
 const form = element('note-form');
+const readOnly = document.body.dataset.readOnly === 'true';
 let editUrl = null;
 let pageUrl = '/api/note/?limit=6';
 let previousUrl = null;
@@ -13,7 +14,7 @@ function status(message, isError = false) {
 
 async function request(url, options = {}) {
   const response = await fetch(url, {
-    ...options, headers: {'Content-Type': 'application/json', ...options.headers}
+    ...options, headers: {'Content-Type': 'application/json', 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value, ...options.headers}
   });
   if (!response.ok) {
     const body = await response.text();
@@ -76,6 +77,7 @@ async function loadNotes(url = pageUrl) {
     card.querySelector('.note-body').textContent = note.body;
     card.querySelector('.edit').onclick = () => editNote(note);
     card.querySelector('.delete').onclick = (event) => deleteNote(note, event.currentTarget);
+    if (readOnly) card.querySelector('.actions').remove();
     list.append(card);
   }
 }

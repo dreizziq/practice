@@ -8,16 +8,16 @@
   <link rel="stylesheet" href="{% static 'api/styles.css' %}">
   <script defer src="{% static 'api/app.js' %}"></script>
 </head>
-<body>
-  <header><a class="brand" href="/">Notable<span> / заметки</span></a><a href="/api/note/">Открыть API ↗</a></header>
+<body data-read-only="{{ read_only|yesno:'true,false' }}">
+  <header><a class="brand" href="/">Notable<span> / заметки</span></a><span>{{ request.user.username }}</span><a href="/api/note/">Открыть API ↗</a><form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="secondary">Выйти</button></form></header>
   <main>
-    <section class="intro"><p class="eyebrow">ПРОСТРАНСТВО ДЛЯ МЫСЛЕЙ</p><h1>Запишите главное.</h1><p>Идеи, планы и небольшие напоминания — в одном месте.</p><p class="notice">Учебная демонстрация. Все заметки общие и доступны посетителям.</p></section>
+    <section class="intro"><p class="eyebrow">ПРОСТРАНСТВО ДЛЯ МЫСЛЕЙ</p><h1>Запишите главное.</h1><p>Идеи, планы и небольшие напоминания — в одном месте.</p><p class="notice">{% if read_only %}Режим аудитора: просмотр всех заметок без изменений.{% elif request.user.is_superuser %}Режим администратора: управление всеми заметками.{% else %}Личный кабинет: здесь видны только ваши заметки.{% endif %}</p></section>
     <div class="workspace">
       <section class="editor" id="create"><h2 id="form-title">Новая заметка</h2>
-        <form id="note-form"><label for="title">Заголовок</label><input id="title" name="title" maxlength="200" required placeholder="О чём хотите помнить?">
+        <form id="note-form">{% csrf_token %}<fieldset {% if read_only %}disabled{% endif %} style="border:0;padding:0;margin:0"><label for="title">Заголовок</label><input id="title" name="title" maxlength="200" required placeholder="О чём хотите помнить?">
           <label for="body">Текст</label><textarea id="body" name="body" rows="7" required placeholder="Запишите мысль…"></textarea>
           <div class="actions"><button id="save" type="submit">Создать заметку</button><button id="cancel" type="button" class="secondary" hidden>Отменить</button></div>
-        </form>
+        </fieldset></form>
         <p id="status" role="status" aria-live="polite"></p>
       </section>
       <section id="notes"><div class="section-title"><h2>Ваши заметки <span id="count"></span></h2><button id="refresh" type="button" class="secondary">Обновить</button></div>

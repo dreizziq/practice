@@ -19,11 +19,16 @@ from django.urls import include, path
 from django.conf import settings
 from django.views.generic import TemplateView
 from api.resources import NoteResource
+from api import views
+from django.contrib.auth.views import LoginView, LogoutView
 
 note_resource = NoteResource()
 
 urlpatterns = [
-    path('', TemplateView.as_view(template_name='api/index.html'), name='home'),
+    path('', views.home, name='home'),
+    path('accounts/login/', LoginView.as_view(template_name='api/login.html'), name='login'),
+    path('accounts/logout/', LogoutView.as_view(), name='logout'),
+    path('health/', views.health, name='health'),
     path('api/', include(note_resource.urls)),
 ]
 if settings.ENABLE_ADMIN:

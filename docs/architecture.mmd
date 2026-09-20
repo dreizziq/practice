@@ -1,4 +1,7 @@
 flowchart LR
-  U[Браузер HTML CSS JavaScript] -->|HTTP JSON| R[Django и TastyPie]
-  R -->|Django ORM| D[(SQLite локально или PostgreSQL на хостинге)]
-  R -->|JSON| U
+  B[Браузер] -->|Сессия и CSRF| A[Django и TastyPie]
+  A --> P[Проверка владельца и роли]
+  P --> O[Django ORM]
+  O --> D[(SQLite)]
+  D --> C[Копия и SHA-256]
+  C --> R[Проверенное восстановление]

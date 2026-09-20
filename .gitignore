@@ -5,6 +5,9 @@ db.sqlite3
 *.log
 *.zip
 .env
+backups/
+*.sqlite3
+*.sha256.json
 staticfiles/
 tmp/
 .coverage

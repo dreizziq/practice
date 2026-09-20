@@ -1,7 +1,8 @@
 {
   "info": {
     "name": "Notable Django API",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Локальная сессия Django: сначала выполнить обе команды входа. Cookie jar должен быть включён. Изменяющие запросы передают CSRF-токен."
   },
   "variable": [
     {
@@ -11,9 +12,48 @@
     {
       "key": "noteUrl",
       "value": ""
+    },
+    {
+      "key": "username",
+      "value": "student1"
+    },
+    {
+      "key": "password",
+      "value": "PracticeDemo2026!"
     }
   ],
   "item": [
+    {
+      "name": "0a. Get login form and CSRF cookie",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/accounts/login/"
+      }
+    },
+    {
+      "name": "0b. Log in (save session cookie)",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/accounts/login/",
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "key": "username",
+              "value": "{{username}}"
+            },
+            {
+              "key": "password",
+              "value": "{{password}}"
+            },
+            {
+              "key": "csrfmiddlewaretoken",
+              "value": "{{csrf}}"
+            }
+          ]
+        }
+      }
+    },
     {
       "name": "1. List notes",
       "request": {
@@ -185,6 +225,18 @@
           }
         }
       ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "const token = pm.cookies.get('csrftoken');",
+          "if (token) { pm.variables.set('csrf', token); pm.request.headers.upsert({key: 'X-CSRFToken', value: token}); }"
+        ]
+      }
     }
   ]
 }

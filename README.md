@@ -1,21 +1,14 @@
 # Notable — заметки на Django
 
+Учебное приложение с личными заметками, REST API и браузерным интерфейсом. Владелец работает со своими записями; аудитор читает все записи; суперпользователь управляет всеми заметками.
 
-Учебное веб-приложение для создания, просмотра, редактирования и удаления заметок. Браузерный интерфейс работает с REST API на Django и TastyPie. Данные хранятся в базе; вход не требуется, заметки общие для всех посетителей.
+Основа: [Create a Django API in Under 20 Minutes](https://codeburst.io/create-a-django-api-in-under-20-minutes-2a082a60f6f3). [Каталог проектов](https://github.com/practical-tutorials/project-based-learning#python).
 
-Проект: [Create a Django API in Under 20 Minutes](https://codeburst.io/create-a-django-api-in-under-20-minutes-2a082a60f6f3).
-Каталог: [https://github.com/practical-tutorials/project-based-learning#python](https://github.com/practical-tutorials/project-based-learning#python). Подтвердите, что этот каталог утверждён преподавателем.
-
-**GitHub:** [ВСТАВИТЬ ССЫЛКУ ПОСЛЕ ЗАГРУЗКИ]  
-**Деплой:** [ВСТАВИТЬ ПУБЛИЧНЫЙ URL ПОСЛЕ ДЕПЛОЯ]
+**GitHub:** [https://github.com/dreizziq/practice](https://github.com/dreizziq/practice)
 
 ## Стек
 
-- Frontend: HTML, CSS, JavaScript, Django Templates.
-- Backend: Python, Django 5.2.17, TastyPie 0.15.1.
-- База: SQLite локально; PostgreSQL настроен для Render.
-- Развёртывание: Gunicorn, WhiteNoise, Render Blueprint.
-- Проверки: Django TestCase, GitHub Actions; локально 8 тестов прошли.
+Python, Django 5.2.17, TastyPie 0.15.1, SQLite, HTML, CSS, JavaScript. Настройки также поддерживают PostgreSQL; проверка копирования и восстановления выполнена для SQLite.
 
 ## Локальный запуск
 
@@ -35,45 +28,52 @@ python -m venv .venv
 .\.venv\Scripts\python.exe manage.py runserver
 ```
 
-Страница: http://127.0.0.1:8000/ . API: http://127.0.0.1:8000/api/note/ . Остановка: Ctrl+C.
+Открыть http://127.0.0.1:8000/ . Вход: `student1`, `student2` или `auditor`; пароль новых локальных тестовых аккаунтов: `PracticeDemo2026!`. Остановка: Ctrl+C. Для собственных данных смените тестовые пароли. `seed_demo` не сбрасывает пароли существующих пользователей.
 
-## API
+## API и права
+
+Все запросы требуют сессии Django после входа. Изменяющие запросы дополнительно требуют заголовок `X-CSRFToken`. Интерфейс передаёт его автоматически.
 
 | Метод | Маршрут | Результат |
 | --- | --- | --- |
-| GET | /api/note/ | Список с пагинацией, 200 |
-| POST | /api/note/ | Создание, 201; Location содержит адрес записи |
-| GET | /api/note/{id}/ | Одна запись, 200; отсутствующая — 404 |
-| PUT | /api/note/{id}/ | Замена заголовка и текста, 204 |
+| GET | /api/note/ | Список доступных заметок с пагинацией, 200 |
+| POST | /api/note/ | Создание собственной заметки, 201 |
+| GET | /api/note/{id}/ | Одна доступная заметка, 200 |
+| PUT | /api/note/{id}/ | Изменение, 204 |
 | DELETE | /api/note/{id}/ | Удаление, 204 |
 
-POST и PUT: заголовок `Content-Type: application/json`, тело `{"title":"Заметка","body":"Текст"}`. Завершающий `/` обязателен. Заголовок и текст обязательны; длина заголовка до 200 символов. Дата хранится в базе, но скрыта в API как в заключительном примере статьи. Массовое удаление отключено. Готовые запросы: [коллекция Postman](Notable.postman_collection.json).
+POST и PUT: `Content-Type: application/json`, тело `{"title":"Заметка","body":"Текст"}`. Заголовок и текст обязательны; заголовок до 200 символов. Чужая запись скрыта от обычного пользователя. Аудитору запрещены изменения. Поле владельца назначает сервер. Массовое удаление отключено.
 
-## Демонстрация
+[Аккаунты и сценарии проверки](docs/ACCESS.md). [Запросы Postman](Notable.postman_collection.json).
 
-![Создание и изменение заметки](docs/demo.gif)
+## База данных и резервные копии
 
-GIF длится 24,5 секунды. Он собран из реальных последовательных снимков локального браузера: заполнение формы, создание записи, редактирование и сохранённый результат. Сценарий: [docs/DEMO.md](docs/DEMO.md).
+Заметка связана обязательным внешним ключом с пользователем. Непустые значения проверяются формой и ограничениями БД. Удаление владельца с заметками запрещено.
 
-## Качество кода
+```powershell
+.\.venv\Scripts\python.exe manage.py backup_database --output backups/copy.sqlite3
+.\.venv\Scripts\python.exe manage.py restore_database backups/copy.sqlite3 --output backups/restored.sqlite3
+```
 
-Внешний сервис не подключён; результат: не подтверждён.
-Code Climate Quality заменён Qlty. Для требования A/B нужен реальный анализ и согласование замены сервиса с преподавателем. Конфигурация `.codeclimate.yml` не является оценкой. После подключения внесите URL бейджа в `submission.json` и пересоберите материалы.
+Команды создают новые файлы и отказываются перезаписывать существующие. Восстановление проверяет SHA-256 и целостность базы. [Подробности](docs/DATABASE.md), [результат проверки](docs/backup-verification.json).
+
+## Проверки
 
 ```powershell
 .\.venv\Scripts\python.exe manage.py check
-.\.venv\Scripts\python.exe manage.py collectstatic --noinput
 .\.venv\Scripts\python.exe manage.py test
 ```
 
-## Материалы практики
+Локально пройдены 16 тестов: CRUD, валидация, изоляция пользователей, роли, CSRF, копирование и восстановление. Внешняя оценка Code Climate A/B не подтверждена; конфигурация сервиса не является результатом анализа.
 
-- [Отчёт PDF](output/pdf/practice-report.pdf) и [редактируемый текст](docs/REPORT.md).
+## Демонстрация и отчёты
+
+![Создание и изменение заметки](docs/demo.gif)
+
+- [Сценарий демонстрации](docs/DEMO.md).
 - [Таблица соответствия](docs/TRACEABILITY.md).
-- [Развёртывание и заполнение ссылок](docs/DEPLOY.md).
-- [Чек-лист перед сдачей](docs/BEFORE_SUBMISSION.md).
-- [Архитектура](docs/architecture.mmd), [ERD](docs/erd.mmd).
+- [Отчёт ПМ11](output/reports/Отчет_ПМ11_заполненный.docx) и [отчёт ПМ02](output/reports/Отчет_ПМ02_заполненный.docx).
+- [PDF ПМ11](output/pdf/practice-report.pdf) и [PDF ПМ02](output/pdf/practice-report-pm02.pdf).
+- [Проверка перед сдачей](docs/BEFORE_SUBMISSION.md).
 
-Административная панель отключена по умолчанию. Основным сценариям не нужны login/password. Если включаете служебную панель через `ENABLE_ADMIN=true`, создайте пользователя командой `createsuperuser`; не включайте её в сдачу без тестовых доступов.
-
-Проект — открытая учебная доска, не персональное хранилище. Для публичного сервера задайте `DEBUG=false` и случайный `SECRET_KEY`; Render Blueprint уже предусматривает эти параметры. `.env.example` показывает переменные, но сам файл автоматически не загружается.
+Для пересборки Word-отчётов: установить `requirements-report.txt` и выполнить `python tools/fill_reports.py` (Windows, шрифт Times New Roman). Исходные шаблоны находятся в `docs/templates`. Скрипт `tools/build_submission.py` обновляет текстовые материалы. PDF экспортируются из Word.
