@@ -1,0 +1,4 @@
+flowchart LR
+  U[Браузер HTML CSS JavaScript] -->|HTTP JSON| R[Django и TastyPie]
+  R -->|Django ORM| D[(SQLite локально или PostgreSQL на хостинге)]
+  R -->|JSON| U

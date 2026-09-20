@@ -1,0 +1,32 @@
+{% load static %}
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Notable — заметки</title>
+  <link rel="stylesheet" href="{% static 'api/styles.css' %}">
+  <script defer src="{% static 'api/app.js' %}"></script>
+</head>
+<body>
+  <header><a class="brand" href="/">Notable<span> / заметки</span></a><a href="/api/note/">Открыть API ↗</a></header>
+  <main>
+    <section class="intro"><p class="eyebrow">ПРОСТРАНСТВО ДЛЯ МЫСЛЕЙ</p><h1>Запишите главное.</h1><p>Идеи, планы и небольшие напоминания — в одном месте.</p><p class="notice">Учебная демонстрация. Все заметки общие и доступны посетителям.</p></section>
+    <div class="workspace">
+      <section class="editor" id="create"><h2 id="form-title">Новая заметка</h2>
+        <form id="note-form"><label for="title">Заголовок</label><input id="title" name="title" maxlength="200" required placeholder="О чём хотите помнить?">
+          <label for="body">Текст</label><textarea id="body" name="body" rows="7" required placeholder="Запишите мысль…"></textarea>
+          <div class="actions"><button id="save" type="submit">Создать заметку</button><button id="cancel" type="button" class="secondary" hidden>Отменить</button></div>
+        </form>
+        <p id="status" role="status" aria-live="polite"></p>
+      </section>
+      <section id="notes"><div class="section-title"><h2>Ваши заметки <span id="count"></span></h2><button id="refresh" type="button" class="secondary">Обновить</button></div>
+        <div id="note-list" aria-live="polite"></div>
+        <nav class="pagination" aria-label="Страницы заметок"><button id="previous" class="secondary" disabled>Назад</button><button id="next" class="secondary" disabled>Далее</button></nav>
+      </section>
+    </div>
+  </main>
+  <footer>Notable · Django + TastyPie · учебный проект</footer>
+  <template id="note-template"><article class="note"><h3></h3><p class="note-body"></p><div class="actions"><button class="edit secondary">Изменить</button><button class="delete danger">Удалить</button></div></article></template>
+</body>
+</html>

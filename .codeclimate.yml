@@ -1,0 +1,19 @@
+version: "2"
+checks:
+  argument-count:
+    enabled: true
+  complex-logic:
+    enabled: true
+  method-complexity:
+    enabled: true
+  method-lines:
+    enabled: true
+  identical-code:
+    enabled: true
+exclude_patterns:
+  - ".venv/"
+  - "api/migrations/"
+  - "staticfiles/"
+  - "tmp/"
+  - "docs/"
+  - "output/"
